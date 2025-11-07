@@ -1,3 +1,7 @@
+**DO NOT USE** This repository was cloned from [vic/den](https://github.com/vic/den) `bogus` template
+just to test the CI works.
+
+---
 # Bug Reproduction den
 
 Use this small template to reproduce bugs in den.
