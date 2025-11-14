@@ -1,7 +1,13 @@
-{ inputs, lib, ... }:
+{ inputs, lib, den, ... }:
 {
   den.hosts.x86_64-linux.igloo.users.tux = { };
   den.hosts.aarch64-darwin.apple.users.tim = { };
+
+  den.aspects.tux.includes = [ den.aspects.test-user-ctx ];
+  den.aspects.test-user-ctx = { user, ... }: {
+    nixos.users.users.${user.userName}.description = user.description;
+    homeManager = { };
+  };
 
   # Use aspects to create a **minimal** bug reproduction
   den.aspects.igloo.nixos =
