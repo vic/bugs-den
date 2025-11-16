@@ -38,8 +38,19 @@
       };
       url = "github:nix-community/home-manager";
     };
+    homebrew-cask = {
+      flake = false;
+      url = "github:homebrew/homebrew-cask";
+    };
+    homebrew-core = {
+      flake = false;
+      url = "github:homebrew/homebrew-core";
+    };
     import-tree = {
       url = "github:vic/import-tree";
+    };
+    nix-homebrew = {
+      url = "github:zhaofengli/nix-homebrew";
     };
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixpkgs-unstable";

@@ -5,7 +5,7 @@
       hostName = "agro";
       description = "swift companion";
       class = "darwin";
-      aspect = "laptop";
+      aspect = "benny";
       users = {
         benny = {
           description = "Benny Andresen";

@@ -1,4 +1,4 @@
-{ den, eg, ... }:
+{ den, eg, inputs, ... }:
 {
   den.aspects.benny = {
 
@@ -19,34 +19,135 @@
           };
       in
       [
-        # from local bindings.
-        customEmacs
         # from the aspect tree, cooper example is defined below
         den.aspects.setHost
-        # from the `eg` namespace.
-        eg.autologin
-        # den included batteries that provide common configs.
-        <den/primary-user> # admin
+	den._.primary-user
         (<den/user-shell> "fish") # default user shell
       ];
 
-    # Alice configures NixOS hosts it lives on.
-    nixos =
-      { pkgs, ... }:
+    # Benny configures darwin hosts it lives on.
+    darwin =
+      { pkgs, config, ... }:
       {
-        users.users.benny.packages = [ pkgs.neovim ];
+        imports = [
+	  # nix-homebrew.darwinModules.nix-homebrew
+	  #        { nix-homebrew = {
+	  #            enable = true;
+	  #            enableRosetta = true;
+	  #            user = "benny";
+	  #            taps = {
+	  #              "homebrew/homebrew-core" = inputs.homebrew-core;
+	  #              "homebrew/homebrew-cask" = inputs.homebrew-cask;
+	  #            };
+	  #     # declarative taps
+	  #            mutableTaps = false;
+	  #          }; }
+	  #
+	  #        # nix-homebrew / nix-darwin tap awareness
+	  #        ({ config, ... }: {
+	  #          homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
+	  #        })
+	];
+
+        # the above den._.primary-user doesn't work
+        system.primaryUser = "benny";
+
+	nix.enable = true;
+	nix.extraOptions = ''
+	  experimental-features = nix-command flakes
+	'';
+
+        users.users.benny.home = "/Users/benny";
+	system.defaults = {
+          dock = {
+            autohide = true;
+            persistent-apps = [
+                      "/Applications/Ghostty.app"
+                      "/Applications/Firefox.app"
+                      "/System/Applications/Mail.app"
+                      "/System/Applications/Calendar.app"
+            ];
+            orientation = "bottom";
+            show-recents = false;
+            static-only = true;
+         };
+         finder = {
+           FXPreferredViewStyle = "clvm"; # Column view
+           # AppleShowAllExtensions = true;
+           # FXEnableExtensionChangeWarning = false;
+         };
+         loginwindow.GuestEnabled = false;
+         loginwindow.LoginwindowText = "a6n.in";
+         screensaver.askForPasswordDelay = 10;
+         NSGlobalDomain = {
+           AppleICUForce24HourTime = true;
+           KeyRepeat = 1; # Fastest
+           InitialKeyRepeat = 15;
+         };
+        };
+
+        security.pam.services.sudo_local.touchIdAuth = true;
+
+	# homebrew = {
+	#   enable = true;
+	#   brewPrefix = "/usr/local/bin";
+	#   onActivation = {
+	#     autoUpdate = false;
+	#     cleanup = "zap";
+	#     upgrade = true;
+	#   };
+	#   casks = [
+	#     "hammerspoon"
+	#     "firefox"
+	#     "karabiner-elements"
+	#     "tailscale-app"
+	#     "discord"
+	#     "syncthing-app"
+	#     "steam"
+	#     "spotify"
+	#     "fastmail"
+	#     "google-chrome"
+	#   ];
+	#   brews = [
+	#     "mas"
+	#     "curl"
+	#   ];
+	#   masApps = {
+	#     "Bitwarden" = 1352778147;
+	#   };
+	# };
       };
 
     # Alice home-manager.
     homeManager =
       { pkgs, config, ... }:
       {
-        home.packages = [ pkgs.htop ];
+        home.packages = with pkgs; [
+	];
+	programs = {
+	  direnv = {
+            enable = true;
+            nix-direnv.enable = true;
+          };
+	  bat.enable = true;
+	  btop.enable = true;
+	  eza.enable = true;
+	  fd.enable = true;
+	  fzf.enable = true;
+	  ripgrep.enable = true;
+	  zoxide.enable = true;
+	  neovim.enable = true;
+	  jujutsu.enable = true;
+	  zellij = {
+	    enable = true;
+	  };
+	};
 	programs.nh.enable = true;
+        programs.home-manager.enable = true;
 	xdg.enable = true;
 
 	home.file."${config.home.homeDirectory}/.hammerspoon/init.lua".source = ../../resources/home/hammerspoon/init.lua;
-	home.file."${config.home.homeDirectory}/.hammerspoon/Spoons/PaperWM.spoon".source = ../../resources/hammerspoon/Spoons/PaperWM.spoon;
+	home.file."${config.home.homeDirectory}/.hammerspoon/Spoons/PaperWM.spoon".source = ../../resources/home/hammerspoon/Spoons/PaperWM.spoon;
 	home.file."${config.home.homeDirectory}/.hammerspoon/Spoons/ActiveSpace.spoon".source = ../../resources/home/hammerspoon/Spoons/ActiveSpace.spoon;
 
 	home.activation.reloadHammerspoon = config.lib.dag.entryAfter [ "writeBoundary" ] ''
@@ -55,13 +156,6 @@
           $DRY_RUN_CMD /Applications/Hammerspoon.app/Contents/Frameworks/hs/hs -c "hs.console.clearConsole()"
         '';
         };
-
-    # <user>.provides.<host>, via eg/routes.nix
-    provides.igloo =
-      { host, ... }:
-      {
-        nixos.programs.nh.enable = host.name == "igloo";
-      };
   };
 
   # This is a context-aware aspect, that emits configurations
