@@ -1,4 +1,4 @@
-{ den, eg, inputs, ... }:
+{ den, lib, inputs, ... }:
 {
   den.aspects.benny = {
 
@@ -29,29 +29,20 @@
     darwin =
       { pkgs, config, ... }:
       {
-        imports = [
-	  # nix-homebrew.darwinModules.nix-homebrew
-	  #        { nix-homebrew = {
-	  #            enable = true;
-	  #            enableRosetta = true;
-	  #            user = "benny";
-	  #            taps = {
-	  #              "homebrew/homebrew-core" = inputs.homebrew-core;
-	  #              "homebrew/homebrew-cask" = inputs.homebrew-cask;
-	  #            };
-	  #     # declarative taps
-	  #            mutableTaps = false;
-	  #          }; }
-	  #
-	  #        # nix-homebrew / nix-darwin tap awareness
-	  #        ({ config, ... }: {
-	  #          homebrew.taps = builtins.attrNames config.nix-homebrew.taps;
-	  #        })
-	];
-
+        imports = [ inputs.nix-homebrew.darwinModules.nix-homebrew ];
         # the above den._.primary-user doesn't work
         system.primaryUser = "benny";
 
+        nix-homebrew = {
+	  enableRosetta = true;
+	  user = config.system.primaryUser;
+	  taps = {
+	    "homebrew/homebrew-core" = inputs.homebrew-core;
+	    "homebrew/homebrew-cask" = inputs.homebrew-cask;
+	  };
+	  mutableTaps = false;
+	  autoMigrate = true;
+	};
 	nix.enable = true;
 	nix.extraOptions = ''
 	  experimental-features = nix-command flakes
@@ -88,34 +79,32 @@
 
         security.pam.services.sudo_local.touchIdAuth = true;
 
-	# homebrew = {
-	#   enable = true;
-	#   brewPrefix = "/usr/local/bin";
-	#   onActivation = {
-	#     autoUpdate = false;
-	#     cleanup = "zap";
-	#     upgrade = true;
-	#   };
-	#   casks = [
-	#     "hammerspoon"
-	#     "firefox"
-	#     "karabiner-elements"
-	#     "tailscale-app"
-	#     "discord"
-	#     "syncthing-app"
-	#     "steam"
-	#     "spotify"
-	#     "fastmail"
-	#     "google-chrome"
-	#   ];
-	#   brews = [
-	#     "mas"
-	#     "curl"
-	#   ];
-	#   masApps = {
-	#     "Bitwarden" = 1352778147;
-	#   };
-	# };
+	homebrew = {
+	  enable = true;
+	  taps = builtins.attrNames config.nix-homebrew.taps;
+	  onActivation = {
+	    autoUpdate = false;
+	    cleanup = "zap";
+	    upgrade = true;
+	  };
+	  casks = [
+	    "hammerspoon"
+	     "firefox"
+	     "karabiner-elements"
+	     "tailscale-app"
+	     "discord"
+	     "syncthing-app"
+	     "fastmail"
+	     "google-chrome"
+	  ];
+	  brews = [
+	    "mas"
+	    "curl"
+	  ];
+	  masApps = {
+	    "Bitwarden" = 1352778147;
+	  };
+	};
       };
 
     # Alice home-manager.
