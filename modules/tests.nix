@@ -5,16 +5,16 @@
   perSystem =
     {
       pkgs,
-      self',
-      lib,
       ...
     }:
     let
       checkCond = name: cond: pkgs.runCommandLocal name { } (if cond then "touch $out" else "");
-      apple = inputs.self.darwinConfigurations.apple.config;
-      appleBuilds = !pkgs.stdenvNoCC.isDarwin || builtins.pathExists (apple.system.build.toplevel);
+      agro = inputs.self.darwinConfigurations.agro.config;
+      agroBuilds = !pkgs.stdenvNoCC.isDarwin || builtins.pathExists (agro.system.build.toplevel);
+      homeBuilds = !pkgs.stdenvNoCC.isDarwin || builtins.pathExists (inputs.self.homeConfigurations.benny.activation-script + "/activate");
     in
     {
-      checks."apple builds" = checkCond "apple-builds" appleBuilds;
+      checks.host-builds = checkCond "agroBuilds" agroBuilds;
+      checks.home-builds = checkCond "homeBuilds" homeBuilds;
     };
 }

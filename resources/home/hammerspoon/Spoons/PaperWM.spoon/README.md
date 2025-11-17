@@ -12,12 +12,11 @@ https://user-images.githubusercontent.com/900731/147793584-f937811a-20aa-4282-ba
 
 ## Installation
 
-1. Clone to Hammerspoon Spoons directory: `git clone
-https://github.com/mogenson/PaperWM.spoon ~/.hammerspoon/Spoons/PaperWM.spoon`.
+1. Clone to Hammerspoon Spoons directory: `git clone https://github.com/mogenson/PaperWM.spoon ~/.hammerspoon/Spoons/PaperWM.spoon`.
 
-2. Open `System Preferences` -> `Desktop and Dock`. Scroll to the bottom to
-"Mission Control", then uncheck "Automatically rearrange Spaces based on most
-recent use" and check "Displays have separate Spaces".
+1. Open `System Preferences` -> `Desktop and Dock`. Scroll to the bottom to
+   "Mission Control", then uncheck "Automatically rearrange Spaces based on most
+   recent use" and check "Displays have separate Spaces".
 
 <img width="780" src="https://github.com/user-attachments/assets/b0842c44-2a3b-43fc-85eb-66729cd7f8db">
 
@@ -153,6 +152,7 @@ edges. This can be a single number for all sides, or a table specifying `top`,
 `bottom`, `left`, and `right` gaps individually.
 
 For example:
+
 ```lua
 -- 10px gap on all sides
 PaperWM.window_gap = 10
@@ -245,12 +245,13 @@ side-by-side screens.
 The following spoons compliment PaperWM.spoon nicely.
 
 - [ActiveSpace.spoon](https://github.com/mogenson/ActiveSpace.spoon) Show active
-and layout of Mission Control spaces in the menu bar.
+  and layout of Mission Control spaces in the menu bar.
 - [WarpMouse.spoon](https://github.com/mogenson/WarpMouse.spoon) Move mouse
-cursor between screen edges to simulate side-by-side screens.
+  cursor between screen edges to simulate side-by-side screens.
 - [Swipe.spoon](https://github.com/mogenson/Swipe.spoon) Perform actions when
-trackpad swipe gestures are recognized. Here's an example config to change
-PaperWM.spoon focused window:
+  trackpad swipe gestures are recognized. Here's an example config to change
+  PaperWM.spoon focused window:
+
 ```lua
 -- focus adjacent window with 3 finger swipe
 local actions = PaperWM.actions.actions()
@@ -278,18 +279,19 @@ Swipe:start(3, function(direction, distance, id)
     end
 end)
 ```
+
 - [FocusMode.spoon](https://github.com/selimacerbas/FocusMode.spoon) Helps you
-stay in flow by dimming everything except what you’re working on.
+  stay in flow by dimming everything except what you’re working on.
 
 ## Contributing
 
 Contributions are welcome! Here are a few preferences:
+
 - Global variables are `PascalCase` (eg. `PaperWM`)
 - Local variables are `snake_case` (eg. `local focused_window`)
 - Function names are `camelCase` (eg. `function windowEventHandler()`)
 - Use `<const>` where possible
-- Create a local copy when deeply nested members are used often (eg. `local
-Watcher <const> = hs.uielement.watcher`)
+- Create a local copy when deeply nested members are used often (eg. `local Watcher <const> = hs.uielement.watcher`)
 
 Code format checking and linting is provided by
 [lua-language-server](https://github.com/LuaLS/lua-language-server) for commits
