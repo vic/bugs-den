@@ -1,49 +1,27 @@
-{
-  inputs,
-  den,
-  lib,
-  ...
-}:
+{ den, inputs, ... }:
 {
   den.hosts.x86_64-linux.igloo.users.tux = { };
 
-  den.aspects.igloo.includes = [ den.aspects.testing ];
   # Use aspects to create a **minimal** bug reproduction
-  den.aspects.testing =
-    { user, ... }@ctx:
-    builtins.trace ctx.host.hostName {
-      homeManager.programs.vim.enable = user.userName == "tux";
-    };
+  den.aspects.tux.includes = [
+    (den._.unfree ["steam" "steam-unwrapped"])
+    {
+      homeManager = { pkgs, ... }: {
+        home.packages = [
+          pkgs.steam
+        ];
+      };
+    }
+  ];
 
-  # `nix-unit --flake .#.tests.systems`
-  # `nix eval .#.tests.testItWorks`
-  flake.tests.testItWorks =
+  # rename "it works", evidently it has bugs
+  flake.tests."test it works" =
     let
-      igloo = inputs.self.nixosConfigurations.igloo.config;
-      tux = igloo.home-manager.users.tux;
+      expr.packages-load = inputs.self.nixosConfigurations.igloo.config.home-manager.users.tux.home ? packages;
 
-      expr = tux.programs.vim.enable;
-      expected = true;
+      expected.packages-load = true;
     in
     {
       inherit expr expected;
     };
-
-  # See [Debugging Tips](https://den.oeiuwq.com/debugging.html)
-  flake.den = den;
-  # `nix eval .#.value`
-  flake.value =
-    let
-      aspect = den.aspects.testing {
-        user.userName = "tux";
-        host.hostName = "fake";
-      };
-      modules = [
-        (aspect.resolve { class = "homeManager"; })
-        { options.programs = lib.mkOption { }; }
-      ];
-      evaled = lib.evalModules { inherit modules; };
-    in
-    evaled.config;
-
 }
