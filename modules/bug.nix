@@ -18,7 +18,7 @@
   };
   # Use aspects to create a **minimal** bug reproduction
   den.aspects.testing =
-    { user, ... }@ctx:
+    { HM, user, ... }@ctx:
     {
       homeManager = { pkgs, ... }: { home.packages = [ pkgs.vim ]; };
     };
@@ -30,8 +30,8 @@
       igloo = inputs.self.nixosConfigurations.igloo.config;
       tux = igloo.home-manager.users.tux;
 
-      expr = lib.lists.count (p: builtins.match "vim-.*" p.name != null) tux.home.packages;
-      expected = 1;
+      expr = map lib.getName tux.home.packages;
+      expected = [ "vim" ];
     in
     {
       inherit expr expected;

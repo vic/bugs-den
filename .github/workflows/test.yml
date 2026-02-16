@@ -12,7 +12,7 @@ jobs:
         os: [ubuntu-latest]
         # add more releases or commits to test
         # rev: [ "main", "v0.8.0", "caa328d" ]
-        rev: ["main"]
+        rev: ["main", "36b571d06f1bda73a940bea0bec498bd7c75c3b6", "3ec43279b5afea898737238a75178079bf91d606"]
     name: Den (rev ${{matrix.rev}})
     runs-on: ${{matrix.os}}
     steps:
